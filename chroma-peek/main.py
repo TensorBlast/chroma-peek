@@ -43,8 +43,19 @@ if not(path==""):
                  index=0,
                  )
         
+        st.write("**Include in display:**")
+        include_embeddings = st.checkbox("Include Embeddings", value=False)
+        include_metadata = st.checkbox("Include Metadata", value=True)
+        
     with col2:
-        df = peeker.get_collection_data(collection_selected, dataframe=True)
+        include_options = []
+        if include_embeddings:
+            include_options.append('embeddings')
+        if include_metadata:
+            include_options.append('metadatas')
+        include_options.append('documents')  # Always include documents
+        
+        df = peeker.get_collection_data(collection_selected, dataframe=True, include=include_options)
 
         st.markdown(f"<b>Data in </b>*{collection_selected}*", unsafe_allow_html=True)
         st.dataframe(df, use_container_width=True, height=300)
@@ -53,7 +64,7 @@ if not(path==""):
 
     query = st.text_input("Enter Query to get 3 similar texts", placeholder="get 3 similar texts")
     if query:
-        result_df = peeker.query(query, collection_selected, dataframe=True)
+        result_df = peeker.query(query, collection_selected, dataframe=True, include=include_options)
         
         st.dataframe(result_df, use_container_width=True)
 
